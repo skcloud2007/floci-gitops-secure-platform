@@ -1,0 +1,43 @@
+replicaCount: 2
+image:
+  repository: customer-portal-api
+  pullPolicy: IfNotPresent
+  tag: dev
+
+app:
+  version: dev
+  environment: dev
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+probes:
+  liveness:
+    path: /health
+    initialDelaySeconds: 10
+    periodSeconds: 10
+  readiness:
+    path: /ready
+    initialDelaySeconds: 5
+    periodSeconds: 5
+podSecurityContext:
+  runAsUser: 10001
+  runAsNonRoot: true
+  fsGroup: 10001
+
+ContainerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop:
+      - ALL

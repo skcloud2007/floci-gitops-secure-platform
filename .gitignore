@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Mac
+.DS_Store
+
+# FLoCI local persistent data
+infra/floci/data/
+
+# Local reports generated during testing
+reports/*
+!reports/.gitkeep
+
+# IDE
+.vscode/
+.idea/

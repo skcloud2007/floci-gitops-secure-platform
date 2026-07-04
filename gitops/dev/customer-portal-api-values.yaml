@@ -1,0 +1,23 @@
+replicaCount: 2
+
+image:
+  repository: localhost:5100/000000000000/us-east-1/customer-portal-api
+  tag: dev-20260704190449
+  pullPolicy: IfNotPresent
+
+app:
+  version: dev-20260704190449
+  environment: dev
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
