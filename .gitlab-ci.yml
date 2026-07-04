@@ -1,0 +1,17 @@
+stages:
+  - test
+
+runner_test:
+  stage: test
+  script:
+    - echo "GitLab local shell runner is working"
+    - hostname
+    - whoami
+    - command -v docker
+    - command -v aws
+    - command -v kubectl
+    - command -v helm
+    - command -v trivy
+    - docker ps | grep -E 'floci|registry|floci-gitops' || true
+    - aws s3 ls --endpoint-url http://localhost:4566
+    - kubectl get nodes
