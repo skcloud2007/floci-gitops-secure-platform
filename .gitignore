@@ -17,3 +17,6 @@ reports/*
 # IDE
 .vscode/
 .idea/
+
+# GitLab Runner local builds
+builds/
