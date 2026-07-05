@@ -61,7 +61,7 @@ policy_test:
 build:
   stage: build
   script:
-    - docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ./app
+    - docker build --pull --no-cache -t ${IMAGE_NAME}:${IMAGE_TAG} ./app
     - docker images | grep ${IMAGE_NAME}
     - echo "IMAGE_TAG=${IMAGE_TAG}" > build.env
   artifacts:
