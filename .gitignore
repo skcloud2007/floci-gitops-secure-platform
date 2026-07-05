@@ -20,3 +20,4 @@ reports/*
 
 # GitLab Runner local builds
 builds/
+.gitlab-ci.yml.bak
