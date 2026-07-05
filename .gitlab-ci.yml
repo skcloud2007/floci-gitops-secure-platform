@@ -6,6 +6,7 @@ stages:
   - publish
   - evidence
   - update_gitops
+  - smoke_test
 
 default:
   tags:
@@ -188,3 +189,22 @@ update_gitops:
     - git commit -m "Update dev image to ${IMAGE_TAG} [skip ci]"
     - git remote set-url origin "https://oauth2:${GITLAB_PUSH_TOKEN}@gitlab.com/skcloud2007/floci-gitops-secure-platform.git"
     - git push origin HEAD:main
+
+
+smoke_test:
+  stage: smoke_test
+  needs:
+    - job: update_gitops
+  script:
+    - echo "Waiting for Argo CD to detect GitOps image update"
+    - sleep 45
+    - kubectl annotate application customer-portal-api-dev -n argocd argocd.argoproj.io/refresh=hard --overwrite
+    - sleep 20
+    - mkdir -p reports/release
+    - set -o pipefail && ./scripts/smoke-test.sh | tee reports/release/smoke-test-${CI_PIPELINE_ID}.txt
+    - aws s3 mb s3://floci-release-evidence --endpoint-url "$AWS_ENDPOINT_URL" || true
+    - aws s3 cp reports/release/smoke-test-${CI_PIPELINE_ID}.txt s3://floci-release-evidence/customer-portal-api/dev/smoke-tests/smoke-test-${CI_PIPELINE_ID}.txt --endpoint-url "$AWS_ENDPOINT_URL"
+  artifacts:
+    when: always
+    paths:
+      - reports/release/smoke-test-*.txt
