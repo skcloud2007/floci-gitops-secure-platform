@@ -1,5 +1,6 @@
 stages:
   - validate
+  - policy_test
   - build
   - scan
   - publish
@@ -42,6 +43,20 @@ validate:
     - helm lint helm/customer-portal-api
     - mkdir -p reports
     - helm template customer-portal-api-dev helm/customer-portal-api -f helm/customer-portal-api/values-dev.yaml --namespace customer-dev > reports/render-check.yaml
+
+
+policy_test:
+  stage: policy_test
+  script:
+    - echo "Running Kyverno policy validation"
+    - mkdir -p reports/security
+    - aws s3 mb s3://floci-security-reports --endpoint-url "$AWS_ENDPOINT_URL" || true
+    - set -o pipefail && ./scripts/test-kyverno-policies.sh | tee reports/security/kyverno-policy-test-${CI_PIPELINE_ID}.txt
+    - aws s3 cp reports/security/kyverno-policy-test-${CI_PIPELINE_ID}.txt s3://floci-security-reports/customer-portal-api/dev/policy-tests/kyverno-policy-test-${CI_PIPELINE_ID}.txt --endpoint-url "$AWS_ENDPOINT_URL"
+  artifacts:
+    when: always
+    paths:
+      - reports/security/kyverno-policy-test-*.txt
 
 build:
   stage: build
