@@ -6,6 +6,10 @@ stages:
   - evidence
   - update_gitops
 
+default:
+  tags:
+  - floci-local
+
 variables:
   AWS_ENDPOINT_URL: "http://localhost:4566"
   AWS_DEFAULT_REGION: "us-east-1"
