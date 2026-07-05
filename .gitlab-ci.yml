@@ -53,6 +53,7 @@ build:
     reports:
       dotenv: build.env
 
+
 scan:
   stage: scan
   needs:
@@ -60,9 +61,12 @@ scan:
       artifacts: true
   script:
     - mkdir -p reports
+    - echo "Generating Trivy JSON report"
     - trivy image --exit-code 0 --format json -o reports/trivy-image-${IMAGE_TAG}.json ${IMAGE_NAME}:${IMAGE_TAG}
+    - echo "Generating Trivy table report"
     - trivy image --exit-code 0 --format table -o reports/trivy-image-${IMAGE_TAG}.txt ${IMAGE_NAME}:${IMAGE_TAG}
-    - echo "Trivy image scan completed"
+    - echo "Running Trivy security gate for CRITICAL vulnerabilities"
+    - trivy image --exit-code 1 --severity CRITICAL --ignore-unfixed ${IMAGE_NAME}:${IMAGE_TAG}
   artifacts:
     when: always
     paths:
