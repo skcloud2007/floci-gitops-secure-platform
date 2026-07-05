@@ -2,11 +2,11 @@ replicaCount: 2
 
 image:
   repository: localhost:5100/000000000000/us-east-1/customer-portal-api
-  tag: dev-2653004420-fce79fd8
+  tag: dev-2653012764-4bc584e0
   pullPolicy: IfNotPresent
 
 app:
-  version: dev-2653004420-fce79fd8
+  version: dev-2653012764-4bc584e0
   environment: dev
 
 service:
